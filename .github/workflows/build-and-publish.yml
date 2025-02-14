@@ -20,7 +20,7 @@ jobs:
       # ssh even when you specify https
       - name: Build ui
         run: |
-          git config url."https://x-token-auth:${{ secrets.DYN_LAYOUT_REPO_KEY }}@bitbucket.org/aglabs/".insteadOf "git+ssh://git@bitbucket.org/aglabs/"
+          git config url."https://x-token-auth:${{ secrets.DYN_LAYOUT_REPO_KEY }}@bitbucket.org/aglabs/".insteadOf "ssh://git@bitbucket.org/aglabs/"
           make preview-ui
 
       - name: Install pypa/build
