@@ -4,4 +4,4 @@ preview-ui:
 		cd layout-previewer && \
 		npm install && \
 		npm run build && \
-		cp -a build/. ../skill-framework/skill_framework/server/ui
+		cp -a build/. ../skill_framework/server/ui
