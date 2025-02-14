@@ -1,0 +1,2 @@
+recursive-include skill_framework/server/ui *
+include skill_framework/starter_skill/.gitignore

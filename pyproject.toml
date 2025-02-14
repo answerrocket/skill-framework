@@ -1,0 +1,29 @@
+[project]
+name = "skill-framework"
+description = "AnswerRocket skill framework"
+readme = "readme.md"
+requires-python = ">=3.10.7"
+dynamic = ["version"]
+dependencies = [
+    "pydantic",
+    "pathspec",
+    "jinja2",
+]
+
+[project.optional-dependencies]
+ui = [
+  "fastapi[standard]"
+]
+
+[project.scripts]
+package-skill = "skill_framework.package:package_skill"
+init-skill = "skill_framework.package:init_skill"
+preview-server = "skill_framework.server.main:run"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+
+[tool.setuptools.dynamic]
+version = { attr = "skill_framework.__version__" }
