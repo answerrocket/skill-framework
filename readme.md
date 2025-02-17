@@ -1,6 +1,11 @@
 This is a framework for creating AnswerRocket skills. It provides decorators
 and utilities for turning your code into something that can be invoked by our platform.
 
+# Install
+`pip install skill-framework[ui]` to install the library with the local preview server
+
+`pip install skill-framework` for a plain install
+
 There are three command line utilities installed along with this library:
 
 `package-skill <your_entry_file>.py` - packages your skill for upload to your AnswerRocket environment. This will generate a
