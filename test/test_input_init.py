@@ -24,3 +24,9 @@ def test_empty_args():
     assert skill_input.arguments.dim is None
 
 
+def test_invalid_arg():
+    skill_input = dummy_skill.create_input(arguments={'metrics': ['sales'], 'bad_arg': 'some value'})
+    assert skill_input.arguments.metrics[0] == 'sales'
+    assert not hasattr(skill_input.arguments, 'bad_arg')
+
+
