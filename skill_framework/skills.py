@@ -94,11 +94,11 @@ class Skill:
     def create_input(self, assistant_id=None, arguments: dict | None = None) -> SkillInput:
         if not arguments:
             arguments = {}
-        skill_arguments = _create_skill_arguments(self, **arguments)
+        skill_arguments = _create_skill_arguments(self, arguments)
         return SkillInput(assistant_id=assistant_id, arguments=skill_arguments)
 
 
-def _create_skill_arguments(skill: Skill, **kwargs):
+def _create_skill_arguments(skill: Skill, arguments):
     def field_type(p: SkillParameter):
         return list[str] if p.is_multi else str | None
 
@@ -113,7 +113,11 @@ def _create_skill_arguments(skill: Skill, **kwargs):
         'SkillArguments',
         fields,
     )
-    return cls(**kwargs)
+    valid_parameter_names = [param.name for param in skill.parameters]
+    assign_args = {
+        k: v for k, v in arguments.items() if k in valid_parameter_names
+    }
+    return cls(**assign_args)
 
 
 class Node:
