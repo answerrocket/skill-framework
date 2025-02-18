@@ -1,4 +1,4 @@
-from skill_framework import skill, SkillParameter, SkillParameters, SkillOutput
+from skill_framework import skill, SkillParameter, SkillInput, SkillOutput
 
 
 @skill(
@@ -11,5 +11,5 @@ from skill_framework import skill, SkillParameter, SkillParameters, SkillOutput
         )
     ]
 )
-def my_skill(parameters: SkillParameters) -> SkillOutput:
+def my_skill(parameters: SkillInput) -> SkillOutput:
     pass

@@ -34,7 +34,8 @@ If you already have one, this script will not replace it.
 A skill needs to have a `@skill` decorated entry point, like this:
 
 ```python
-from skill_framework import skill, SkillParameters, SkillParameter, SkillOutput
+from skill_framework import skill, SkillInput, SkillParameter, SkillOutput
+
 
 @skill(
     name="my_skill",
@@ -46,7 +47,7 @@ from skill_framework import skill, SkillParameters, SkillParameter, SkillOutput
         )
     ]
 )
-def my_skill(parameters: SkillParameters):
+def my_skill(parameters: SkillInput):
     # you can access arguments to your parameters extracted from
     # natural language queries via the arguments field
     # other run-specific context will also be provided on this object
@@ -57,22 +58,26 @@ def my_skill(parameters: SkillParameters):
     narrative = create_narrative(data)
     prompt = create_chat_response_prompt(data, narrative)
     return SkillOutput(
-      final_prompt=prompt,
-      narrative=narrative,
-      visualization=visualization
+        final_prompt=prompt,
+        narrative=narrative,
+        visualization=visualization
     )
+
 
 def get_some_data(params):
     # use the client to get some data from a dataset
     pass
 
+
 def create_visualization(data):
     # embed the data into a json layout payload
     pass
 
+
 def create_narrative(data):
     # make some description of the data to appear as the narrative part of the response
     pass
+
 
 def create_chat_response_prompt(data, narrative):
     # use the data and narrative to create a prompt for the model that will generate the response
@@ -83,11 +88,10 @@ def create_chat_response_prompt(data, narrative):
 You can generate a preview for viewing with the `preview-server` by passing your skill's output to `preview_skill`:
 
 ```python
-from skill_framework import SkillParameters, preview_skill
-
+from skill_framework import SkillInput, preview_skill
 
 if __name__ == '__main__':
-    mock_params = SkillParameters(
+    mock_params = SkillInput(
         # mock values here
     )
     output = your_skill(mock_params)
