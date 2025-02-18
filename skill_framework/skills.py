@@ -4,7 +4,7 @@ import keyword
 import os
 from dataclasses import make_dataclass, field
 from pydantic import BaseModel, ConfigDict, field_validator
-from typing import Callable, Literal
+from typing import Callable, Literal, Any
 from skill_framework.util import flexible_decorator
 
 
@@ -100,7 +100,7 @@ class Skill:
 
 def _create_skill_arguments(skill: Skill, arguments):
     def field_type(p: SkillParameter):
-        return list[str] if p.is_multi else str | None
+        return list[Any] if p.is_multi else Any | None
 
     def parameter_field(p: SkillParameter):
         return field(default_factory=list) if p.is_multi else field(default=None)
