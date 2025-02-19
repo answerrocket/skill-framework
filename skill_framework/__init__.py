@@ -10,4 +10,4 @@ __all__ = [
 from skill_framework.skills import skill, SkillInput, SkillParameter, SkillOutput, ExitFromSkillException
 from skill_framework.preview import preview_skill
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
