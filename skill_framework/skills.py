@@ -65,13 +65,13 @@ class SkillInput:
 
 
 class SkillOutput(FrameworkBaseModel):
-    final_prompt: str | None
+    final_prompt: str | None = None
     "Used to prompt the model to generate the chat response"
 
-    narrative: str | None
+    narrative: str | None = None
     "A text element that can accompany the visualization. Markdown formatting supported."
 
-    visualization: str | None
+    visualization: str | None = None
     "A rendered json layout payload"
 
 
@@ -156,3 +156,18 @@ def render(template: jinja2.Template, variables: dict):
         'MAX__RESOURCES': os.getenv('MAX_RESOURCES') or '/resources/'
     }
     return template.render({**base_vars, **variables})
+
+
+class ExitFromSkillException(Exception):
+    """
+    Raise this exception to exit from your skill with a message that is used when creating the chat response to the user
+
+    Attributes:
+        message: the technical error message meant to aid in troubleshooting
+        prompt_message: used when generating a chat response to the user. This can be used to
+            do things like suggest the user provide additional information.
+    """
+    def __init__(self, message, prompt_message):
+        super().__init__(message)
+        self.message = message
+        self.prompt_message = prompt_message
