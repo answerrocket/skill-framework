@@ -64,15 +64,48 @@ class SkillInput:
         return str(self.__dict__)
 
 
+class ParameterDescription(FrameworkBaseModel):
+    """
+    Display information about arguments for a particular parameter. This can be used to make it
+    clear to the user what values were understood from the question or what defaults were used.
+    Attributes:
+        key: a unique key to identify this parameter. not part of what is displayed in the UI
+        value: the text that will appear in the UI. note that since the key is not used to drive any display
+            information, you need to include a name for the parameter in this value if you want it to be seen.
+    """
+    key: str
+    value: str
+
+
+class SuggestedQuestion(FrameworkBaseModel):
+    """
+    A question to suggest to the user as a followup. Appears in the chat UI under the most recent response.
+    Attributes:
+        label: the label of the question, this is the text that appears in the UI
+        question: the actual question that is used as the next message in the chat thread if the user clicks on it.
+            If not provided, the label will be used as-is.
+    """
+    label: str
+    question: str | None = None
+
+
 class SkillOutput(FrameworkBaseModel):
+    """
+    Container for skill output
+    Attributes:
+        final_prompt: Used to prompt the model to generate the chat response
+        narrative: A text element that can accompany the visualization. Markdown formatting supported.
+        visualization: A rendered json layout payload
+        parameter_descriptions: A list of ParameterDescription objects that can be used to display information about the actual
+            arguments that were used by the skill. Not limited to explicit skill parameters, see type for details
+        followup_questions: A list of recommended followup questions for the user to ask.
+            These will appear in the chat ui
+    """
     final_prompt: str | None = None
-    "Used to prompt the model to generate the chat response"
-
     narrative: str | None = None
-    "A text element that can accompany the visualization. Markdown formatting supported."
-
     visualization: str | None = None
-    "A rendered json layout payload"
+    parameter_descriptions: list[ParameterDescription] | None = None
+    followup_questions: list[SuggestedQuestion] | None = None
 
 
 class Skill:
