@@ -64,7 +64,7 @@ class SkillInput:
         return str(self.__dict__)
 
 
-class ParameterDescription(FrameworkBaseModel):
+class ParameterDisplayDescription(FrameworkBaseModel):
     """
     Display information about arguments for a particular parameter. This can be used to make it
     clear to the user what values were understood from the question or what defaults were used.
@@ -96,15 +96,15 @@ class SkillOutput(FrameworkBaseModel):
         final_prompt: Used to prompt the model to generate the chat response
         narrative: A text element that can accompany the visualization. Markdown formatting supported.
         visualization: A rendered json layout payload
-        parameter_descriptions: A list of ParameterDescription objects that can be used to display information about the actual
-            arguments that were used by the skill. Not limited to explicit skill parameters, see type for details
+        parameter_display_descriptions: A list of ParameterDisplayDescription objects that can be used to display information
+            about the actual arguments that were used by the skill. Not limited to explicit skill parameters.
         followup_questions: A list of recommended followup questions for the user to ask.
             These will appear in the chat ui
     """
     final_prompt: str | None = None
     narrative: str | None = None
     visualization: str | None = None
-    parameter_descriptions: list[ParameterDescription] | None = None
+    parameter_display_descriptions: list[ParameterDisplayDescription] | None = None
     followup_questions: list[SuggestedQuestion] | None = None
 
 

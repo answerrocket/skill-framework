@@ -5,12 +5,12 @@ __all__ = [
     'preview_skill',
     'SkillOutput',
     'ExitFromSkillException',
-    'ParameterDescription',
+    'ParameterDisplayDescription',
     'SuggestedQuestion',
 ]
 
 from skill_framework.skills import (skill, SkillInput, SkillParameter, SkillOutput, ExitFromSkillException,
-                                    ParameterDescription, SuggestedQuestion)
+                                    ParameterDisplayDescription, SuggestedQuestion)
 from skill_framework.preview import preview_skill
 
 __version__ = '0.2.1'
