@@ -13,4 +13,4 @@ from skill_framework.skills import (skill, SkillInput, SkillParameter, SkillOutp
                                     ParameterDisplayDescription, SuggestedQuestion)
 from skill_framework.preview import preview_skill
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
