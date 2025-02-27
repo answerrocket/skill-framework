@@ -3,16 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@answerrocket/dynamic-layout": "git+https://bitbucket.org/aglabs/dynamic-layout.git#main",
     "cra-template": "1.2.0",
     "react": "18",
     "react-dom": "18",
     "react-router-dom": "^6.22.3",
     "react-scripts": "5.0.1",
-    "@answerrocket/dynamic-layout": "git+https://bitbucket.org/aglabs/dynamic-layout.git#main"
+    "react-tabs": "^6.1.0"
   },
   "devDependencies": {
-      "@types/react": "18",
-      "@types/react-dom": "18"
+    "@types/react": "18",
+    "@types/react-dom": "18"
   },
   "scripts": {
     "start": "react-scripts start",
