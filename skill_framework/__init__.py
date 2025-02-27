@@ -7,10 +7,11 @@ __all__ = [
     'ExitFromSkillException',
     'ParameterDisplayDescription',
     'SuggestedQuestion',
+    'SkillVisualization'
 ]
 
 from skill_framework.skills import (skill, SkillInput, SkillParameter, SkillOutput, ExitFromSkillException,
-                                    ParameterDisplayDescription, SuggestedQuestion)
+                                    ParameterDisplayDescription, SuggestedQuestion, SkillVisualization)
 from skill_framework.preview import preview_skill
 
 __version__ = '0.2.2'
