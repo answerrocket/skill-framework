@@ -1,9 +1,14 @@
 import json
+import logging
+
 import uvicorn
 import os
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+
+logger = logging.getLogger("uvicorn.error")
+
 
 app = FastAPI()
 
@@ -12,9 +17,18 @@ app.mount("/resources", StaticFiles(directory="resources"), name="resources")
 
 @app.get("/previews/{rest_of_path:path}")
 def get_layout(rest_of_path: str):
-    with open(f'.previews/{rest_of_path}.json', 'r') as f:
-        layout = json.load(f)
-        return layout
+    layouts = []
+    for dirpath, _, filenames in os.walk(os.path.join('.previews', rest_of_path)):
+        for filename in filenames:
+            if not filename.endswith('.json'):
+                continue
+            with open(os.path.join('.previews', rest_of_path, filename), 'r') as f:
+                try:
+                    layout = json.load(f)
+                    layouts.append(layout)
+                except Exception:
+                    logger.error(f"failed to load layout from {filename}")
+    return layouts
 
 
 app.mount("/static", StaticFiles(directory=f"{os.path.join(os.path.dirname(__file__), 'ui/static')}"), name='ui')
