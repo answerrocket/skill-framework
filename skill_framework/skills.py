@@ -2,8 +2,7 @@ import inspect
 import jinja2
 import keyword
 import os
-from dataclasses import make_dataclass, field
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator, Field, create_model
 from typing import Callable, Literal, Any
 from skill_framework.util import flexible_decorator
 
@@ -27,7 +26,7 @@ class SkillParameter(FrameworkBaseModel):
     constrained_to: Literal['metrics', 'dimensions', 'filters'] | None = None
     is_multi: bool = False
     description: str | None = None
-    constrained_values: list[str] = field(default_factory=list)
+    constrained_values: list[str] = Field(default_factory=list)
 
     @field_validator('name')
     @classmethod
@@ -104,8 +103,8 @@ class SkillOutput(FrameworkBaseModel):
     final_prompt: str | None = None
     narrative: str | None = None
     visualization: str | None = None
-    parameter_display_descriptions: list[ParameterDisplayDescription] | None = None
-    followup_questions: list[SuggestedQuestion] | None = None
+    parameter_display_descriptions: list[ParameterDisplayDescription] = Field(default_factory=list)
+    followup_questions: list[SuggestedQuestion] = Field(default_factory=list)
 
 
 class Skill:
@@ -136,15 +135,15 @@ def _create_skill_arguments(skill: Skill, arguments):
         return list[Any] if p.is_multi else Any | None
 
     def parameter_field(p: SkillParameter):
-        return field(default_factory=list) if p.is_multi else field(default=None)
+        return Field(default_factory=list) if p.is_multi else Field(default=None)
 
-    fields = [
-        (param.name, field_type(param), parameter_field(param))
+    fields = {
+        param.name: (field_type(param), parameter_field(param))
         for param in skill.parameters
-    ]
-    cls = make_dataclass(
+    }
+    cls = create_model(
         'SkillArguments',
-        fields,
+        **fields,
     )
     valid_parameter_names = [param.name for param in skill.parameters]
     assign_args = {
