@@ -88,13 +88,25 @@ class SuggestedQuestion(FrameworkBaseModel):
     question: str | None = None
 
 
+class SkillVisualization(FrameworkBaseModel):
+    """
+
+    Attributes:
+        title: the title of the visualization, appears in places such as on the visualization's tab header when the
+            visualizations are tabbed
+        layout: a json-layout payload. detail on this still todo
+    """
+    title: str
+    layout: str
+
+
 class SkillOutput(FrameworkBaseModel):
     """
     Container for skill output
     Attributes:
         final_prompt: Used to prompt the model to generate the chat response
         narrative: A text element that can accompany the visualization. Markdown formatting supported.
-        visualization: A rendered json layout payload
+        visualizations: One or more SkillVisualizations, consisting of a layout describing the visualization and associated metadata
         parameter_display_descriptions: A list of ParameterDisplayDescription objects that can be used to display information
             about the actual arguments that were used by the skill. Not limited to explicit skill parameters.
         followup_questions: A list of recommended followup questions for the user to ask.
@@ -102,7 +114,7 @@ class SkillOutput(FrameworkBaseModel):
     """
     final_prompt: str | None = None
     narrative: str | None = None
-    visualization: str | None = None
+    visualizations: list[SkillVisualization] = Field(default_factory=list)
     parameter_display_descriptions: list[ParameterDisplayDescription] = Field(default_factory=list)
     followup_questions: list[SuggestedQuestion] = Field(default_factory=list)
 
