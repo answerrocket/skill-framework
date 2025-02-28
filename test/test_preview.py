@@ -1,7 +1,7 @@
 import json
 from io import StringIO
 
-from skill_framework import skill, SkillVisualization
+from skill_framework import SkillVisualization
 from skill_framework.preview import write_viz_preview
 
 
