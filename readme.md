@@ -34,7 +34,7 @@ If you already have one, this script will not replace it.
 A skill needs to have a `@skill` decorated entry point, like this:
 
 ```python
-from skill_framework import skill, SkillInput, SkillParameter, SkillOutput
+from skill_framework import skill, SkillInput, SkillParameter, SkillOutput, SkillVisualization
 
 
 @skill(
@@ -60,7 +60,7 @@ def my_skill(parameters: SkillInput):
     return SkillOutput(
         final_prompt=prompt,
         narrative=narrative,
-        visualization=visualization
+        visualizations=[visualization],
     )
 
 
@@ -69,17 +69,17 @@ def get_some_data(params):
     pass
 
 
-def create_visualization(data):
+def create_visualization(data) -> SkillVisualization:
     # embed the data into a json layout payload
     pass
 
 
-def create_narrative(data):
+def create_narrative(data) -> str:
     # make some description of the data to appear as the narrative part of the response
     pass
 
 
-def create_chat_response_prompt(data, narrative):
+def create_chat_response_prompt(data, narrative) -> str:
     # use the data and narrative to create a prompt for the model that will generate the response
     # in the chat window
     pass
@@ -88,13 +88,22 @@ def create_chat_response_prompt(data, narrative):
 You can generate a preview for viewing with the `preview-server` by passing your skill's output to `preview_skill`:
 
 ```python
-from skill_framework import SkillInput, preview_skill
+from skill_framework import preview_skill, skill, SkillParameter
+
+@skill(
+    name="my skill",
+    parameters=[
+        SkillParameter(
+            name="metric",
+        )
+    ]
+)
+def my_skill(skill_input):
+    pass
 
 if __name__ == '__main__':
-    mock_params = SkillInput(
-        # mock values here
-    )
-    output = your_skill(mock_params)
+    mock_input = my_skill.create_input(arguments={'metric': 'sales'})
+    output = my_skill(mock_input)
     # this utility function will write the output to where the local preview server expects it
-    preview_skill(your_skill, output)
+    preview_skill(my_skill, output)
 ```
