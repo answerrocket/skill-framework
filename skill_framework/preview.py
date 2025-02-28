@@ -1,7 +1,7 @@
 import json
 import os
 
-from skill_framework import SkillOutput
+from skill_framework import SkillOutput, SkillVisualization
 
 
 def preview_skill(skill, skill_output: SkillOutput):
@@ -15,15 +15,19 @@ def preview_skill(skill, skill_output: SkillOutput):
         os.makedirs(f'{path}', exist_ok=True)
     for idx, viz in enumerate(skill_output.visualizations):
         with open(f'{path}/viz-{idx}.json', 'w') as f:
-            # this is not just calling model_dump_json so that the json embedded in the layout can be written out
-            # as json that can be read by a human, since this is for previewing outputs.
-            try:
-                viz_dict = viz.model_dump()
-                viz_dict['layout'] = json.loads(viz_dict['layout'])
-                f.write(json.dumps(viz_dict, indent=2))
-            except Exception:
-                # write it out even if invalid so the user can still review it, the preview server skips invalid layouts
-                print(f'{viz.title} contains invalid json')
-                f.write(viz.layout)
+            write_viz_preview(f, viz)
 
     print(f'Preview at localhost:8484/print/{skill.fn.__name__}')
+
+
+def write_viz_preview(file, viz: SkillVisualization):
+    # this is not just calling model_dump_json so that the json embedded in the layout can be written out
+    # as json that can be read by a human, since this is for previewing outputs.
+    try:
+        viz_dict = viz.model_dump()
+        viz_dict['layout'] = json.loads(viz_dict['layout'])
+        file.write(json.dumps(viz_dict, indent=2))
+    except Exception:
+        # write it out even if invalid so the user can still review it, the preview server skips invalid layouts
+        print(f'{viz.title} contains invalid json')
+        file.write(viz.layout)
