@@ -38,7 +38,7 @@ const PrintPage = () => {
   if (!visualizations) return <div>No page definition found</div>;
 
   const titles = visualizations.map(viz => viz.title)
-  const layouts = visualizations.map(viz => JSON.parse(viz.layout))
+  const layouts = visualizations.map(viz => viz.layout)
 
   return (
     <div className="print-page-container">
