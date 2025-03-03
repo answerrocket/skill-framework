@@ -17,13 +17,14 @@ class SkillParameter(FrameworkBaseModel):
     Attributes:
         name: the name of the parameter. this needs to be a valid python identifier, as these names are used to generate
             a dataclass that will contain the parameter arguments when your skill is invoked.
-        constrained_to: limit the valid arguments to this parameter to a particular type
+        constrained_to: limit the parameter to a particular type during LLM interpretation.
+            valid values are 'metrics', 'dimensions', 'filters', 'date_filter', 'date_dimensions' or a dataset column
         is_multi: if true, multiple arguments can be assigned to this parameter, and its value will always be a list
         description: the parameter description that will appear in the UI
         constrained_values: if set, limits the valid arguments to this parameter to those in this list
     """
     name: str
-    constrained_to: Literal['metrics', 'dimensions', 'filters'] | None = None
+    constrained_to: str | None = None
     is_multi: bool = False
     description: str | None = None
     constrained_values: list[str] = Field(default_factory=list)
