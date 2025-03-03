@@ -23,7 +23,7 @@ class SkillParameter(FrameworkBaseModel):
         constrained_values: if set, limits the valid arguments to this parameter to those in this list
     """
     name: str
-    constrained_to: Literal['metrics', 'dimensions', 'filters'] | None = None
+    constrained_to: str | None = None
     is_multi: bool = False
     description: str | None = None
     constrained_values: list[str] = Field(default_factory=list)
