@@ -13,6 +13,8 @@ def preview_skill(skill, skill_output: SkillOutput):
     path = f'.previews/{skill.fn.__name__}'
     if not os.path.exists(f'{path}'):
         os.makedirs(f'{path}', exist_ok=True)
+    for old_preview in os.listdir(path):
+        os.remove(os.path.join(path, old_preview))
     for idx, viz in enumerate(skill_output.visualizations):
         with open(f'{path}/viz-{idx}.json', 'w') as f:
             write_viz_preview(f, viz)
