@@ -76,10 +76,7 @@ def _generate_config(entry_file):
     if not isinstance(skill, Skill):
         raise Exception(f"Could not find a function with @skill annotation in {entry_file_base}")
     return {
-        'name': skill.name,
-        'description': skill.description,
-        'detailed_description': skill.description,
-        'parameters': [p.model_dump() for p in skill.parameters],
+        **skill.config.model_dump(),
         'entry_file': entry_file_base,
         'entry_point': skill.fn.__name__,
     }

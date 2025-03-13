@@ -120,21 +120,32 @@ class SkillOutput(FrameworkBaseModel):
     followup_questions: list[SuggestedQuestion] = Field(default_factory=list)
 
 
+class SkillConfig(FrameworkBaseModel):
+    """
+    this model class is used to generate the manifest when packaging a skill. anything added here
+    will automatically be exported as part of that
+    """
+    name: str
+    llm_name: str
+    parameters: list[SkillParameter] = Field(default_factory=list)
+    description: str | None = None
+    parameter_guidance: str | None = None
+    limitations: str | None = None
+    capabilities: str | None = None
+    example_questions: str | None = None
+
+
 class Skill:
-    def __init__(self, fn: Callable[[SkillInput], SkillOutput], name=None, description=None, parameters=None):
+    def __init__(
+            self,
+            fn: Callable[[SkillInput], SkillOutput],
+            config: SkillConfig,
+    ):
         self.fn = fn
-        self.parameters: list[SkillParameter] = parameters or []
-        self.name = name or fn.__name__
-        self.description = description
-        self.nodes = []
+        self.config = config
 
     def __call__(self, *args, **kwargs):
         return self.fn(*args, **kwargs)
-
-    def node(self, fn):
-        n = Node(fn, skill=self)
-        self.nodes.append(n)
-        return n
 
     def create_input(self, assistant_id=None, arguments: dict | None = None) -> SkillInput:
         if not arguments:
@@ -152,42 +163,57 @@ def _create_skill_arguments(skill: Skill, arguments):
 
     fields = {
         param.name: (field_type(param), parameter_field(param))
-        for param in skill.parameters
+        for param in skill.config.parameters
     }
     cls = create_model(
         'SkillArguments',
         **fields,
     )
-    valid_parameter_names = [param.name for param in skill.parameters]
+    valid_parameter_names = [param.name for param in skill.config.parameters]
     assign_args = {
         k: v for k, v in arguments.items() if k in valid_parameter_names
     }
     return cls(**assign_args)
 
 
-class Node:
-    def __init__(self, fn, name=None, skill=None):
-        self.fn = fn
-        self.name = name or fn.__name__
-        self.skill = skill
-        self.signature = inspect.signature(fn)
-
-    def __call__(self, *args, **kwargs):
-        return self.fn(*args, **kwargs)
-
-
 @flexible_decorator
-def skill(fn: Callable[[SkillInput], SkillOutput], name: str = None, parameters: list[SkillParameter] | None = None, description: str = None):
+def skill(fn: Callable[[SkillInput], SkillOutput],
+          name: str = None,
+          parameters: list[SkillParameter] | None = None,
+          description: str = None,
+          llm_name: str | None = None,
+          parameter_guidance: str | None = None,
+          limitations: str | None = None,
+          capabilities: str | None = None,
+          example_questions: str | None = None,
+    ):
     """
     Marks a function as a skill entry point.
-    :param name: the name of the skill, will default to the function's name if not provided.
+    :param name: the name of the skill in the UI, will default to the function's name if not provided.
+    :param llm_name: the name of the skill as it will be shown to the LLM. will default to the function's name if not provided.
     :param parameters: a list of SkillParameters
-    :param description: the description of the skill that will appear in the ui
+    :param description: the description of the skill for the LLM. this is used when selecting a skill to run.
+    :param parameter_guidance: description of how to handle the skill's parameters. used in the system prompt passed to the LLM
+    :param limitations: explanation of any limitations the skill has. used in the system prompt passed to the LLM
+    :param capabilities: description of the skill's capabilities (ie what sort of questions it is good for answering).
+        used in the system prompt passed to the llm
+    :param example_questions: examples of questions that would be well-answered by this skill. used in the system prompt
+        passed to the LLM
     :return: your skill function wrapped in a Skill class that wraps the metadata defined in the constructor and
         provides utility methods. This class defines __call__, so it can still be used like a normal function for the
         purposes of testing.
     """
-    return Skill(fn, name=name, parameters=parameters, description=description)
+    model = SkillConfig(
+        name=name or fn.__name__,
+        llm_name=llm_name or fn.__name__,
+        parameters=parameters or [],
+        description=description,
+        parameter_guidance=parameter_guidance,
+        capabilities=capabilities,
+        limitations=limitations,
+        example_questions=example_questions,
+    )
+    return Skill(fn, model)
 
 
 def render(template: jinja2.Template, variables: dict):
@@ -212,6 +238,7 @@ class ExitFromSkillException(Exception):
         prompt_message: used when generating a chat response to the user. This can be used to
             do things like suggest the user provide additional information.
     """
+
     def __init__(self, message, prompt_message):
         super().__init__(message)
         self.message = message
