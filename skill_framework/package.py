@@ -24,14 +24,14 @@ def _package_skill(entry_file):
     skill_config = _generate_config(entry_file)
     skill_files = _discover_files()
     pprint(skill_config)
-    with zipfile.ZipFile(f'{entry_mod_name}.zip', mode='w') as zip:
+    with zipfile.ZipFile(f'{entry_mod_name}.zip', mode='w') as skill_zip:
         print('packaging skill...')
-        zip.writestr('skill_config.json', json.dumps(skill_config, indent=2))
+        skill_zip.writestr('skill_config.json', json.dumps(skill_config, indent=2))
         for file in skill_files:
             if file == f'{entry_mod_name}.zip':
                 continue
             print(f'including {file}')
-            zip.write(file)
+            skill_zip.write(file)
         print(f'created {entry_mod_name}.zip')
 
 
