@@ -4,7 +4,8 @@ from skill_framework import skill, SkillParameter, SkillInput
     name="some_skill",
     parameters=[
         SkillParameter(name='metrics', is_multi=True),
-        SkillParameter(name='dim')
+        SkillParameter(name='dim'),
+        SkillParameter(name='another_dim', default_value="state"),
     ]
 )
 def dummy_skill():
@@ -22,6 +23,7 @@ def test_empty_args():
     assert isinstance(skill_input.arguments.metrics, list)
     assert len(skill_input.arguments.metrics) == 0
     assert skill_input.arguments.dim is None
+    assert skill_input.arguments.another_dim == 'state'
 
 
 def test_invalid_arg():
