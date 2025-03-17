@@ -111,6 +111,8 @@ class ExportData(FrameworkBaseModel):
     name: str
     data: Any
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
 
 class SkillOutput(FrameworkBaseModel):
     """
