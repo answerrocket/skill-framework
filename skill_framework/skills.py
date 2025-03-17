@@ -18,16 +18,22 @@ class SkillParameter(FrameworkBaseModel):
         name: the name of the parameter. this needs to be a valid python identifier, as these names are used to generate
             a dataclass that will contain the parameter arguments when your skill is invoked.
         constrained_to: limit the parameter to a particular type during LLM interpretation.
-            valid values are 'metrics', 'dimensions', 'filters', 'date_filter', 'date_dimensions' or a dataset column
+            valid values are 'metrics', 'dimensions', 'filters', 'date_filter', 'date_dimensions', or a dataset column
         is_multi: if true, multiple arguments can be assigned to this parameter, and its value will always be a list
         description: the parameter description that will appear in the UI
         constrained_values: if set, limits the valid arguments to this parameter to those in this list
+        default_value: the default value to use for this parameter
+        parameter_type: the top-level type of this parameter. 'chat' parameters are ones that are exposed when
+            selecting a skill to run and extracting values from user queries.
+
     """
     name: str
     constrained_to: str | None = None
     is_multi: bool = False
+    parameter_type: Literal['chat', 'prompt'] = 'chat'
     description: str | None = None
     constrained_values: list[str] = Field(default_factory=list)
+    default_value: Any | None = None
 
     @field_validator('name')
     @classmethod
@@ -53,6 +59,7 @@ class SkillInput:
             be populated based on your declared parameters. f. ex, a list parameter for which no arguments were captured
             will be initialized to an empty list.
     """
+
     def __init__(self, assistant_id, arguments):
         self.assistant_id = assistant_id
         self.arguments = arguments
@@ -174,7 +181,7 @@ def _create_skill_arguments(skill: Skill, arguments):
         return list[Any] if p.is_multi else Any | None
 
     def parameter_field(p: SkillParameter):
-        return Field(default_factory=list) if p.is_multi else Field(default=None)
+        return Field(default_factory=list) if p.is_multi else Field(default=p.default_value)
 
     fields = {
         param.name: (field_type(param), parameter_field(param))
