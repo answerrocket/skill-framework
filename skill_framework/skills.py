@@ -101,6 +101,17 @@ class SkillVisualization(FrameworkBaseModel):
     layout: str
 
 
+class ExportData(FrameworkBaseModel):
+    """
+    Container class for data exports used to create spreadsheet downloads
+    Attributes:
+        name: A name to label the data. In a spreadsheet export, this becomes the title of the sheet.
+        data: the raw data. this is a dataframe
+    """
+    name: str
+    data: Any
+
+
 class SkillOutput(FrameworkBaseModel):
     """
     Container for skill output
@@ -112,12 +123,14 @@ class SkillOutput(FrameworkBaseModel):
             about the actual arguments that were used by the skill. Not limited to explicit skill parameters.
         followup_questions: A list of recommended followup questions for the user to ask.
             These will appear in the chat ui
+        export_data: list of ExportData that will be made available as a spreadsheet download
     """
     final_prompt: str | None = None
     narrative: str | None = None
     visualizations: list[SkillVisualization] = Field(default_factory=list)
     parameter_display_descriptions: list[ParameterDisplayDescription] = Field(default_factory=list)
     followup_questions: list[SuggestedQuestion] = Field(default_factory=list)
+    export_data: list[ExportData] = Field(default_factory=list)
 
 
 class SkillConfig(FrameworkBaseModel):
