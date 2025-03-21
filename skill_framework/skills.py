@@ -32,7 +32,7 @@ class SkillParameter(FrameworkBaseModel):
     name: str
     constrained_to: str | None = None
     is_multi: bool = False
-    parameter_type: Literal['chat', 'prompt', 'code'] = 'chat'
+    parameter_type: Literal['chat', 'prompt', 'code', 'visualization'] = 'chat'
     description: str | None = None
     constrained_values: list[str] = Field(default_factory=list)
     default_value: Any | None = None
@@ -104,7 +104,7 @@ class SkillVisualization(FrameworkBaseModel):
     Attributes:
         title: the title of the visualization, appears in places such as on the visualization's tab header when the
             visualizations are tabbed
-        layout: a json-layout payload. detail on this still todo
+        layout: a json-layout payload. see layouts.wire_layout for detail
     """
     title: str
     layout: str
