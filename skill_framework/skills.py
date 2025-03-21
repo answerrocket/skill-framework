@@ -24,13 +24,15 @@ class SkillParameter(FrameworkBaseModel):
         constrained_values: if set, limits the valid arguments to this parameter to those in this list
         default_value: the default value to use for this parameter
         parameter_type: the top-level type of this parameter. 'chat' parameters are ones that are exposed when
-            selecting a skill to run and extracting values from user queries.
+            selecting a skill to run and extracting values from user queries. 'prompt' parameters are for prompts that
+            are meant to be exposed for potential customization. 'code' parameters can hold valid json and serve as
+            a way to expose generic config.
 
     """
     name: str
     constrained_to: str | None = None
     is_multi: bool = False
-    parameter_type: Literal['chat', 'prompt'] = 'chat'
+    parameter_type: Literal['chat', 'prompt', 'code'] = 'chat'
     description: str | None = None
     constrained_values: list[str] = Field(default_factory=list)
     default_value: Any | None = None
