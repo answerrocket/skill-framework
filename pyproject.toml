@@ -8,6 +8,7 @@ dependencies = [
     "pydantic",
     "pathspec",
     "jinja2",
+    "dotenv",
 ]
 
 [project.optional-dependencies]
