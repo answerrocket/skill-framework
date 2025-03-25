@@ -1,4 +1,4 @@
-import os.path
+import os
 
 from skill_framework.testing import SkillTestContext
 from skill_framework import skill, SkillParameter, SkillOutput
@@ -11,7 +11,6 @@ from skill_framework import skill, SkillParameter, SkillOutput
     ]
 )
 def harness_tester(skill_input):
-    import os
     some_value = os.getenv('SOME_VALUE')
     prompt = f'{some_value} - {skill_input.arguments.a}'
     return SkillOutput(final_prompt=prompt)
@@ -35,4 +34,3 @@ def test_harness_file_override():
     with SkillTestContext(harness_tester, env_values={'SOME_VALUE': 'test'}, env_file=env_path) as ctx:
         output = ctx.run({'a': 'an argument'})
     assert output.final_prompt == 'test - an argument'
-    
