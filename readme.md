@@ -88,7 +88,8 @@ def create_chat_response_prompt(data, narrative) -> str:
 You can generate a preview for viewing with the `preview-server` by passing your skill's output to `preview_skill`:
 
 ```python
-from skill_framework import preview_skill, skill, SkillParameter
+from skill_framework import skill, SkillParameter
+from skill_framework.testing import SkillTestContext
 
 @skill(
     name="my skill",
@@ -102,8 +103,7 @@ def my_skill(skill_input):
     pass
 
 if __name__ == '__main__':
-    mock_input = my_skill.create_input(arguments={'metric': 'sales'})
-    output = my_skill(mock_input)
-    # this utility function will write the output to where the local preview server expects it
-    preview_skill(my_skill, output)
+    with SkillTestContext(my_skill) as ctx:
+        # this utility will write the output to where the local preview server expects it
+        ctx.preview_run({'metric': 'sales'})
 ```
