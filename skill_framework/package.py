@@ -28,11 +28,15 @@ def _package_skill(entry_file):
         print('packaging skill...')
         skill_zip.writestr('skill_config.json', json.dumps(skill_config, indent=2))
         for file in skill_files:
-            if file == f'{entry_mod_name}.zip':
+            if _always_exclude_file(file):
                 continue
             print(f'including {file}')
             skill_zip.write(file)
         print(f'created {entry_mod_name}.zip')
+
+
+def _always_exclude_file(filename: str):
+    return filename.endswith('.zip') or os.path.dirname(filename).startswith('.git')
 
 
 def _discover_files():
