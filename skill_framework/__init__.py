@@ -17,4 +17,4 @@ from skill_framework.skills import (skill, SkillInput, SkillParameter, SkillOutp
 from skill_framework.preview import preview_skill
 from skill_framework.layouts import wire_layout
 
-__version__ = '0.3.9'
+__version__ = '0.3.10'
