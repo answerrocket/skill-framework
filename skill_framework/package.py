@@ -4,6 +4,7 @@ import keyword
 import os
 import pathspec
 import shutil
+import subprocess
 import sys
 import zipfile
 from pprint import pprint
@@ -83,4 +84,13 @@ def _generate_config(entry_file):
         **skill.config.model_dump(),
         'entry_file': entry_file_base,
         'entry_point': skill.fn.__name__,
+        'version': try_get_git_hash(),
     }
+
+
+def try_get_git_hash():
+    print("attempting to use git commit hash as version")
+    try:
+        return subprocess.check_output("git log -1 --pretty=format:%h", text=True, shell=True)
+    except Exception as e:
+        return None
