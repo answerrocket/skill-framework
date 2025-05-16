@@ -1,4 +1,3 @@
-import inspect
 import jinja2
 import keyword
 import os
