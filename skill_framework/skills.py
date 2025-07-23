@@ -184,7 +184,7 @@ def _create_skill_arguments(skill: Skill, arguments):
         return list[Any] if p.is_multi else Any | None
 
     def parameter_field(p: SkillParameter):
-        return Field(default_factory=list) if p.is_multi else Field(default=p.default_value)
+        return Field(default=p.default_value) if not p.is_multi or p.default_value is not None else Field(default_factory=list)
 
     fields = {
         param.name: (field_type(param), parameter_field(param))
