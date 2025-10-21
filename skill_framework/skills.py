@@ -140,6 +140,7 @@ class SkillOutput(FrameworkBaseModel):
     narrative: str | None = None
     visualizations: list[SkillVisualization] = Field(default_factory=list)
     ppt_slides: list[str] = Field(default_factory=list)
+    pdfs: list[str] = Field(default_factory=list)
     parameter_display_descriptions: list[ParameterDisplayDescription] = Field(default_factory=list)
     followup_questions: list[SuggestedQuestion] = Field(default_factory=list)
     export_data: list[ExportData] = Field(default_factory=list)
