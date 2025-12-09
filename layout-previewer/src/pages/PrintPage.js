@@ -3,31 +3,12 @@ import { useParams } from 'react-router-dom';
 import { DynamicGridLayout } from '@answerrocket/dynamic-layout';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import Highcharts from 'highcharts';
-import HighchartsMore from 'highcharts/highcharts-more';
-
-const initHighcharts = () => {
-  if (typeof Highcharts === 'object') {
-    HighchartsMore(Highcharts);
-    console.log('Highcharts More module initialized');
-  } else {
-    console.error('Highcharts not loaded');
-  }
-};
 
 const PrintPage = () => {
   const { '*': pageId } = useParams();
   const [visualizations, setVisualizations] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [highchartsInitialized, setHighchartsInitialized] = useState(false);
-
-  useEffect(() => {
-    if (!highchartsInitialized) {
-      initHighcharts();
-      setHighchartsInitialized(true);
-    }
-  }, [highchartsInitialized]);
 
   useEffect(() => {
     const loadVisualizations = async () => {
