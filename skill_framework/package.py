@@ -1,13 +1,18 @@
 import importlib
+import inspect
 import json
 import keyword
 import os
+from typing import List, Type
+
 import pathspec
 import shutil
 import subprocess
 import sys
 import zipfile
 from pprint import pprint
+
+from skill_framework import BasePipeline
 from skill_framework.skills import Skill
 
 
@@ -20,9 +25,9 @@ def package_skill():
     _package_skill(args.entry_file)
 
 
-def _package_skill(entry_file):
+def _package_skill(entry_file: str):
     entry_mod_name = entry_file.split('.py')[0]
-    skill_config = _generate_config(entry_file)
+    skill_config = _generate_skill_config(entry_file)
     skill_files = _discover_files()
     pprint(skill_config)
     with zipfile.ZipFile(f'{entry_mod_name}.zip', mode='w') as skill_zip:
@@ -73,7 +78,7 @@ def _init_skill(skill_name="my_skill"):
         shutil.copy(os.path.join(os.path.dirname(__file__), 'starter_skill', '.gitignore'), '.')
 
 
-def _generate_config(entry_file):
+def _generate_skill_config(entry_file: str):
     entry_file_base = os.path.basename(entry_file)
     entry_mod_name = entry_file_base.split('.py')[0]
     entry_mod = importlib.import_module(entry_mod_name)
@@ -94,3 +99,43 @@ def try_get_git_hash():
         return subprocess.check_output("git log -1 --pretty=format:%h", text=True, shell=True)
     except Exception as e:
         return None
+
+
+def package_pipeline():
+    import argparse
+    parser = argparse.ArgumentParser(description='packages pipelines')
+    parser.add_argument('entry_file', type=str)
+    sys.path.append('')
+    args = parser.parse_args()
+    _package_pipeline(args.entry_file)
+
+
+def _package_pipeline(entry_file: str):
+    entry_mod_name = entry_file.split('.py')[0]
+    skill_config = _generate_pipeline_config(entry_file)
+    skill_files = _discover_files()
+    pprint(skill_config)
+    with zipfile.ZipFile(f'{entry_mod_name}.zip', mode='w') as skill_zip:
+        print('packaging pipeline...')
+        skill_zip.writestr('pipeline_config.json', json.dumps(skill_config, indent=2))
+        for file in skill_files:
+            if _always_exclude_file(file):
+                continue
+            print(f'including {file}')
+            skill_zip.write(file)
+        print(f'created {entry_mod_name}.zip')
+
+def _generate_pipeline_config(entry_file: str):
+    entry_file_base = os.path.basename(entry_file)
+    entry_mod_name = entry_file_base.split('.py')[0]
+    entry_mod = importlib.import_module(entry_mod_name)
+    pipeline = next((attr for attr_name, attr in entry_mod.__dict__.items() if isinstance(attr, type) and issubclass(attr, BasePipeline) and attr.get_pipeline_metadata() is not None), None)
+    if not isinstance(pipeline, type):
+        raise Exception(f"Could not find a class that extends BasePipeline in {entry_file_base}")
+
+    return {
+        **pipeline.get_pipeline_metadata().model_dump(),
+        'entry_file': entry_file_base,
+        'entry_point': pipeline.__name__,
+        'version': try_get_git_hash(),
+    }
