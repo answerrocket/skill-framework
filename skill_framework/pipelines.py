@@ -4,6 +4,7 @@ from contextlib import AbstractContextManager
 from dataclasses import dataclass
 from datetime import timedelta, date, datetime
 from enum import Enum
+from logging import Logger
 
 from pydantic import Field, validator, ConfigDict
 from typing import List, Any, Callable, Optional, Literal
@@ -35,8 +36,6 @@ class PipelineStatusCode(Enum):
     # Skill runtime errors
     skill_runtime_error = "S401"
 
-# TODO custom pipeline exception that takes an error code as an argument
-
 class ContentBlock(FrameworkBaseModel):
     id: Optional[uuid.UUID] = uuid.uuid4()
     title: str
@@ -50,29 +49,27 @@ class ReportResult(FrameworkBaseModel):
     title: str
     description: str
     report_name: str
-    run_id: uuid.UUID # FIXME do we even need this anymore?
-    parameters: Optional[List[Any]] = [] # FIXME fix type here
+    run_id: uuid.UUID
+    parameters: Optional[List[Any]] = []
     content_blocks: Optional[List[ContentBlock]] = []
     slides: Optional[List[str]] = []
     has_slides: Optional[bool] = False
     pdfs: Optional[List[str]] = []
     has_pdfs: Optional[bool] = False
-    cache_info: Optional[Any] = None # Fixme fix type here
+    cache_info: Optional[Any] = None
     progress_percent: Optional[int] = 100
     has_export_dataframes: Optional[bool] = False
 
-# TODO clean up types here
+
 class PipelineOutput(FrameworkBaseModel):
     report_results: Optional[List[ReportResult]] = []
     suggestions: Optional[List[str]] = []
-    # new_history_messages: List[Any] # NOTE: how do we want to do this?
     chat_messages: Optional[List[str]] = []
     status_message: Optional[str]
     status_code: Optional[PipelineStatusCode] = PipelineStatusCode.unknown
 
-# TODO clean up types here
+
 class EngineOutput(FrameworkBaseModel):
-    # diagnostics: Any
     status: str
     selectedPipelineName: str
     pipelineResult: PipelineOutput
@@ -91,7 +88,7 @@ class PipelineContext(FrameworkBaseModel):
     answer_id: str
     thread_id: str
     base_url: str
-    llm_message_history: List[Any] # TODO better type
+    llm_message_history: List[Any]
 
 # Anything that must be constructed by the Engine AFTER the user sends a request
 class PipelineRequest(FrameworkBaseModel):
@@ -136,7 +133,6 @@ class ModelExecutionTarget(Enum):
     narrative = "narrative"
     research = "research"
 
-# TODO fix some of these field names
 class ModelExecutionOptions(FrameworkBaseModel):
     should_stream_to_ui: bool = False
     stream_callback: Optional[Callable[[str], None]] = None
@@ -201,20 +197,45 @@ class ReportManager:
         self.report = {}
 
     def get_report(self) -> ReportResult:
+        """
+        Gets the report result associated.
+        :return: ReportResult
+        """
         return self.tools.get_report(self.report_id)
 
     def update_report(self, updates: dict) -> ReportResult:
+        """
+        Updates the current report with the specified fields.
+        :param updates: dictionary of fields to update on the report, only specified fields will be updated
+        :return: updated ReportResult
+        """
         return self.tools.update_report(self.report_id, updates)
 
     def add_content_block(self, new_block: ContentBlock):
+        """
+        Adds a new content block to the current report.
+        :param new_block:
+        :return:
+        """
         current_report = self.get_report()
         self.tools.update_report(self.report_id, {"content_blocks": [*current_report.content_blocks, new_block]})
 
     def remove_content_block(self, block_id: str):
+        """
+        Removes a content block from the current report by ID.
+        :param block_id:
+        :return:
+        """
         current_report = self.get_report()
         self.tools.update_report(self.report_id, {"content_blocks": [block for block in current_report.content_blocks if block.id != block_id]})
 
     def update_content_block(self, block_id: str, updates: dict):
+        """
+        Updates a content block in the current report by ID with the specified fields.
+        :param block_id: id of the content block to update
+        :param updates: dictionary of fields to update on the content block, only specified fields will be updated
+        :return:
+        """
         current_report = self.get_report()
         updated_blocks = []
         for block in current_report.content_blocks:
@@ -231,8 +252,8 @@ class AnswerEngineTools(FrameworkBaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     add_diagnostic: Callable[[Diagnostic], None]
-    logger: Any # TODO get a better type for this
-    pipeline_timer: Any # FIXME get the ttimer type!
+    logger: Logger
+    pipeline_timer: Any # TODO fix this type
     outputs: AnswerEngineOutputTools
     llm: AnswerEngineLlmTools
 
