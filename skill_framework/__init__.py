@@ -19,6 +19,7 @@ __all__ = [
     'PipelineRequest',
     'AnswerEngineTools',
     'PipelineContext',
+    'PipelineMetadata',
     "PipelineStatusCode",
     "ReportResult",
     "ContentBlock",
@@ -26,6 +27,7 @@ __all__ = [
     "AnswerEngineLlmTools",
     "ModelExecutionOptions",
     "ModelExecutionTarget",
+    "AnswerEngineThreadTools",
     # Diagnostics
     "Diagnostic",
     "DiagnosticItem"
@@ -35,7 +37,7 @@ from skill_framework.diagnostics import Diagnostic, DiagnosticItem
 from skill_framework.pipelines import (BasePipeline, PipelineOutput, PipelineRequest, AnswerEngineTools,
                                        PipelineContext, PipelineStatusCode, ReportResult, ContentBlock,
                                        AnswerEngineOutputTools, AnswerEngineLlmTools, ModelExecutionOptions,
-                                       ModelExecutionTarget)
+                                       ModelExecutionTarget, PipelineMetadata, AnswerEngineThreadTools)
 from skill_framework.skills import (skill, SkillInput, SkillParameter, SkillOutput, ExitFromSkillException,
                                     ParameterDisplayDescription, SuggestedQuestion, SkillVisualization, ExportData)
 from skill_framework.preview import preview_skill

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://answerrocket.com/schemas/core-prompt.schema.json",
+  "title": "Core Prompt",
+  "description": "Schema for Max.ai core prompt YAML files",
+  "type": "object",
+  "required": ["meta", "template"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the prompt",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Locally unique identifier for the prompt. Only needs to be unique within a skill/pipeline's own namespace.",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "examples": ["chat_response_prompt", "sql_generation_prompt"]
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of what this prompt does",
+          "maxLength": 500,
+          "examples": ["Generates the final chat message sent to the user after research is complete."]
+        }
+      }
+    },
+    "template": {
+      "type": "string",
+      "description": "The main Jinja2 template for the prompt. Supports variables with {{variable_name}} or {{node.state.property}} syntax. Supports all other Jinja2 syntax.",
+      "minLength": 1,
+      "examples": [
+        "Given the following context:\n\n<context>\n{{context}}\n</context>\n\nAnswer the question: {{question}}"
+      ]
+    },
+    "auxiliaryTemplate": {
+      "type": "string",
+      "description": "Optional system-level instructions or context that precedes the main template. When provided, will be used for system messages in chat-based prompts. NOTE: only chat completions will currently leverage/support this field. All other usages (research, narrative, etc.) will ignore it. Supports all other Jinja2 syntax.",
+      "examples": [
+        "You are an AI assistant tasked with translating English language queries into SQL statements. Use the following database schema to inform your translations:\n\n<schema>\n{{database_schema}}\n</schema>"
+      ]
+    }
+  },
+  "$defs": {
+    "templateVariables": {
+      "description": "Common template variable patterns used in prompts",
+      "examples": [
+        "{{variable_name}}",
+        "{{node.state.property}}",
+        "{UPPERCASE_PLACEHOLDER}",
+        "{{dataset_name}}",
+        "{{field_names}}"
+      ]
+    }
+  }
+}
