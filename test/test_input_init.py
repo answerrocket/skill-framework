@@ -32,3 +32,19 @@ def test_invalid_arg():
     assert not hasattr(skill_input.arguments, 'bad_arg')
 
 
+def test_request_source_defaults_web():
+    skill_input = dummy_skill.create_input(arguments={'metrics': ['sales']})
+    assert skill_input.request_source == 'WEB'
+
+
+def test_request_source_passthrough():
+    skill_input = dummy_skill.create_input(arguments={'metrics': ['sales']}, request_source='MOBILE')
+    assert skill_input.request_source == 'MOBILE'
+
+
+def test_request_source_is_not_a_declared_argument():
+    # request_source is request context surfaced on SkillInput, never a declared skill parameter
+    skill_input = dummy_skill.create_input(arguments={'metrics': ['sales']}, request_source='MOBILE')
+    assert not hasattr(skill_input.arguments, 'request_source')
+
+

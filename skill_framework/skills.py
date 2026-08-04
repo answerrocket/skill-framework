@@ -57,11 +57,13 @@ class SkillInput:
             generated dataclass at runtime, so you can use attribute-style access to refer to them. "empty" values will
             be populated based on your declared parameters. f. ex, a list parameter for which no arguments were captured
             will be initialized to an empty list.
+        request_source: where the request originated, e.g. "WEB" or "MOBILE"; skills may branch on it. Defaults to "WEB".
     """
 
-    def __init__(self, assistant_id, arguments):
+    def __init__(self, assistant_id, arguments, request_source="WEB"):
         self.assistant_id = assistant_id
         self.arguments = arguments
+        self.request_source = request_source
 
     def __str__(self):
         return str(self.__dict__)
@@ -171,11 +173,11 @@ class Skill:
     def __call__(self, *args, **kwargs):
         return self.fn(*args, **kwargs)
 
-    def create_input(self, assistant_id=None, arguments: dict | None = None) -> SkillInput:
+    def create_input(self, assistant_id=None, arguments: dict | None = None, request_source: str = "WEB") -> SkillInput:
         if not arguments:
             arguments = {}
         skill_arguments = _create_skill_arguments(self, arguments)
-        return SkillInput(assistant_id=assistant_id, arguments=skill_arguments)
+        return SkillInput(assistant_id=assistant_id, arguments=skill_arguments, request_source=request_source)
 
 
 def _create_skill_arguments(skill: Skill, arguments):
