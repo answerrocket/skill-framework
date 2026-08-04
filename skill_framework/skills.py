@@ -1,6 +1,7 @@
 import jinja2
 import keyword
 import os
+from enum import Enum
 from pydantic import BaseModel, ConfigDict, field_validator, Field, create_model
 from typing import Callable, Literal, Any
 
@@ -46,6 +47,21 @@ def is_valid_parameter_name(name: str) -> bool:
     return name.isidentifier() and not keyword.iskeyword(name)
 
 
+class RequestSource(Enum):
+    """Where a skill request originated."""
+    WEB = "WEB"
+    MOBILE = "MOBILE"
+
+    @classmethod
+    def _missing_(cls, value):
+        # Lenient: case-insensitive match; unknown/unset sources fall back to WEB (forward-compatible).
+        if isinstance(value, str):
+            for member in cls:
+                if member.value == value.upper():
+                    return member
+        return cls.WEB
+
+
 class SkillInput:
     """
     Container for context and parameter arguments passed into the skill. Recommended to create this object with
@@ -57,13 +73,13 @@ class SkillInput:
             generated dataclass at runtime, so you can use attribute-style access to refer to them. "empty" values will
             be populated based on your declared parameters. f. ex, a list parameter for which no arguments were captured
             will be initialized to an empty list.
-        request_source: where the request originated, e.g. "WEB" or "MOBILE"; skills may branch on it. Defaults to "WEB".
+        request_source: a RequestSource (WEB or MOBILE) for where the request originated; a string is coerced. Defaults to WEB.
     """
 
-    def __init__(self, assistant_id, arguments, request_source="WEB"):
+    def __init__(self, assistant_id, arguments, request_source=RequestSource.WEB):
         self.assistant_id = assistant_id
         self.arguments = arguments
-        self.request_source = request_source
+        self.request_source = RequestSource(request_source)
 
     def __str__(self):
         return str(self.__dict__)
@@ -173,7 +189,7 @@ class Skill:
     def __call__(self, *args, **kwargs):
         return self.fn(*args, **kwargs)
 
-    def create_input(self, assistant_id=None, arguments: dict | None = None, request_source: str = "WEB") -> SkillInput:
+    def create_input(self, assistant_id=None, arguments: dict | None = None, request_source: str | RequestSource = RequestSource.WEB) -> SkillInput:
         if not arguments:
             arguments = {}
         skill_arguments = _create_skill_arguments(self, arguments)
