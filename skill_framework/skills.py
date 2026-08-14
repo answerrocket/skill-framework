@@ -129,6 +129,7 @@ class SkillOutput(FrameworkBaseModel):
         final_prompt: Used to prompt the model to generate the chat response
         narrative: A text element that can accompany the visualization. Markdown formatting supported.
         visualizations: One or more SkillVisualizations, consisting of a layout describing the visualization and associated metadata
+        alt_visualizations: Alternate SkillVisualizations delivered to the external API alongside visualizations. Not rendered by the Max web app.
         ppt_slides: One or more layout json strings, consisting of a layout describing the visualization and associated metadata for ppt export
         parameter_display_descriptions: A list of ParameterDisplayDescription objects that can be used to display information
             about the actual arguments that were used by the skill. Not limited to explicit skill parameters.
@@ -139,6 +140,7 @@ class SkillOutput(FrameworkBaseModel):
     final_prompt: str | None = None
     narrative: str | None = None
     visualizations: list[SkillVisualization] = Field(default_factory=list)
+    alt_visualizations: list[SkillVisualization] = Field(default_factory=list)
     ppt_slides: list[str] = Field(default_factory=list)
     pdfs: list[str] = Field(default_factory=list)
     parameter_display_descriptions: list[ParameterDisplayDescription] = Field(default_factory=list)
