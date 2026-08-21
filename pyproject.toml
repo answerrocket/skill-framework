@@ -20,6 +20,7 @@ test = [
 ]
 
 [project.scripts]
+package-pipeline = "skill_framework.package:package_pipeline"
 package-skill = "skill_framework.package:package_skill"
 init-skill = "skill_framework.package:init_skill"
 preview-server = "skill_framework.server.main:run"

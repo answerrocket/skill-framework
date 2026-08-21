@@ -3,11 +3,9 @@ import keyword
 import os
 from pydantic import BaseModel, ConfigDict, field_validator, Field, create_model
 from typing import Callable, Literal, Any
+
+from skill_framework.common import FrameworkBaseModel
 from skill_framework.util import flexible_decorator
-
-
-class FrameworkBaseModel(BaseModel):
-    model_config = ConfigDict(use_attribute_docstrings=True)
 
 
 class SkillParameter(FrameworkBaseModel):
