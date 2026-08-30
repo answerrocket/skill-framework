@@ -29,17 +29,17 @@ class SkillTestContext:
     def __exit__(self, exc_type, exc_val, exc_tb):
         os.environ = self._initial_env
 
-    def run(self, skill_args: dict):
-        skill_input = self.skill.create_input(None, skill_args)
+    def run(self, skill_args: dict, request_source: str = "WEB"):
+        skill_input = self.skill.create_input(None, skill_args, request_source=request_source)
         return self.skill(skill_input)
 
-    def preview_run(self, skill_args: dict):
+    def preview_run(self, skill_args: dict, request_source: str = "WEB"):
         """
         Runs the skill with the provided arguments and writes preview files
         :param skill_args:
         :return:
         """
-        output = self.run(skill_args)
+        output = self.run(skill_args, request_source=request_source)
         preview_skill(self.skill, output)
         return output
 

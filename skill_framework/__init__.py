@@ -1,6 +1,7 @@
 __all__ = [
     'skill',
     'SkillInput',
+    'RequestSource',
     'SkillParameter',
     'preview_skill',
     'SkillOutput',
@@ -37,7 +38,8 @@ from skill_framework.pipelines import (BasePipeline, PipelineOutput, PipelineReq
                                        AnswerEngineOutputTools, AnswerEngineLlmTools, ModelExecutionOptions,
                                        ModelExecutionTarget)
 from skill_framework.skills import (skill, SkillInput, SkillParameter, SkillOutput, ExitFromSkillException,
-                                    ParameterDisplayDescription, SuggestedQuestion, SkillVisualization, ExportData)
+                                    ParameterDisplayDescription, SuggestedQuestion, SkillVisualization, ExportData,
+                                    RequestSource)
 from skill_framework.preview import preview_skill
 from skill_framework.layouts import wire_layout
 from skill_framework.resources import skill_resource_path, copilot_skill_resource_path, copilot_resource_path
